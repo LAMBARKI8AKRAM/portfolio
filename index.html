@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akram Lambarki - Portfolio</title>
+    <style>
+        /* =========================================
+           1. CORE STYLES & VARIABLES
+           ========================================= */
+        :root {
+            --xp-blue: #245edb;
+            --xp-taskbar: linear-gradient(to bottom, #245edb 0%, #3f8cf3 10%, #245edb 90%, #153c94 100%);
+            --xp-header: linear-gradient(to bottom, #0058ee 0%, #3593ff 4%, #288eff 18%, #127dff 20%, #036dff 23%, #0051e8 86%, #002fbf 100%);
+            --xp-bg: #ece9d8;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+        body {
+            margin: 0; padding: 0; overflow: hidden; height: 100vh;
+            font-family: 'Tahoma', sans-serif; font-size: 11px;
+            background: black; cursor: default;
+        }
+
+        /* =========================================
+           2. SCREENS (LOGIN & BOOT)
+           ========================================= */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100000;
+            background: #003399; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(to right, #003399 0%, #003399 50%, #46a2da 100%);
+        }
+        .login-wrapper { display: flex; align-items: center; gap: 30px; }
+        .login-divider { width: 2px; height: 150px; background: linear-gradient(to bottom, transparent, white, transparent); }
+        .user-card { 
+            display: flex; align-items: center; gap: 15px; padding: 10px 20px; color: white; 
+            border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: 0.2s; 
+        }
+        .user-card:hover { background: rgba(255,165,0,0.2); border-color: orange; }
+        .user-card img { width: 64px; height: 64px; border: 2px solid white; border-radius: 5px; object-fit: cover; background: #fff; }
+
+        /* =========================================
+           3. DESKTOP & ICONS
+           ========================================= */
+        #desktop {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 30px);
+            background: url('https://archive.org/download/bliss-600dpi/bliss-600dpi.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex; flex-direction: column; flex-wrap: wrap; align-content: flex-start;
+            padding: 10px; z-index: 1;
+        }
+
+        .icon {
+            width: 80px; text-align: center; color: white; margin-bottom: 20px;
+            text-shadow: 1px 1px 2px black; border: 1px solid transparent; padding: 5px;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center;
+        }
+        .icon:hover { background: rgba(11, 97, 255, 0.2); border-color: rgba(11, 97, 255, 0.5); border-radius: 3px; }
+        .icon img { width: 48px; height: 48px; margin-bottom: 5px; pointer-events: none; object-fit: contain; }
+
+        /* =========================================
+           4. CONTEXT MENU
+           ========================================= */
+        #ctx-menu {
+            position: absolute; width: 180px; background: white; border: 1px solid #aca899;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); display: none; z-index: 999999;
+        }
+        .ctx-item { padding: 4px 25px 4px 15px; cursor: pointer; font-size: 11px; display: flex; justify-content: space-between; }
+        .ctx-item:hover { background: #316ac5; color: white; }
+        .ctx-sep { height: 1px; background: #ddd; margin: 2px 5px; }
+
+        /* =========================================
+           5. WINDOW SYSTEM
+           ========================================= */
+        .window {
+            position: absolute; background: var(--xp-bg);
+            border-radius: 8px 8px 0 0;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+            padding: 3px; padding-bottom: 0;
+            background-color: #0055ea;
+            min-width: 300px; min-height: 200px;
+            top: 50px; left: 50px;
+        }
+        .title-bar {
+            height: 30px; background: var(--xp-header);
+            border-radius: 5px 5px 0 0; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 8px; color: white; font-weight: bold; text-shadow: 1px 1px #0f306d;
+        }
+        .win-controls { display: flex; gap: 3px; }
+        .win-btn {
+            width: 21px; height: 21px; border: 1px solid white; border-radius: 3px;
+            background: linear-gradient(to bottom, #fff 0%, #ece9d8 100%);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-family: sans-serif; font-size: 10px; color: black; opacity: 0.9;
+        }
+        .win-btn:hover { opacity: 1; filter: brightness(1.1); }
+        .win-btn.close { background: #e0422e; color: white; font-weight: bold; font-size: 14px; }
+        .window-body { flex-grow: 1; background: white; border: 1px solid white; border-top: none; position: relative; overflow: auto; padding: 20px; user-select: text; font-size: 13px;}
+        
+        /* App Specific Styles */
+        .prop-preview { width: 150px; height: 110px; background: #333; margin: 10px auto; border: 10px solid #ddd; border-radius: 10px 10px 0 0; position: relative; }
+        .prop-screen { width: 90%; height: 85%; background: black; margin: 0 auto; margin-top: 5px; background-size: cover; background-position: center; }
+
+        /* Custom Portfolio Styles - Modern & Clean */
+        .portfolio-content { font-family: 'Segoe UI', 'Tahoma', Arial, sans-serif; color: #333; line-height: 1.6; }
+        .portfolio-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+        .portfolio-header h1 { margin: 0; font-size: 26px; color: var(--xp-blue); font-weight: 700; letter-spacing: -0.5px; }
+        .portfolio-header h3 { margin: 5px 0 0; font-size: 15px; font-weight: 500; color: #666; }
+        
+        .skills-container { margin-top: 20px; }
+        .skill-tag { display: inline-block; background: #edf2f9; border: 1px solid #d4e2f4; color: #1e4b9c; padding: 5px 12px; margin: 4px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        
+        .project-cards-container { display: flex; flex-direction: column; gap: 18px; }
+        .project-card { 
+            background: #ffffff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 18px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 18px; 
+            transition: all 0.2s ease-in-out;
+        }
+        .project-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); border-color: #d1dcf0; }
+        .project-card img { width: 45px; height: 45px; object-fit: contain; }
+        .project-info { flex-grow: 1; }
+        .project-info h4 { margin: 0 0 6px 0; color: #222; font-size: 16px; font-weight: 600; }
+        .project-info p { margin: 0 0 12px 0; color: #555; font-size: 13px; line-height: 1.5; }
+        
+        /* Modern Clean Button */
+        .visit-btn {
+            display: inline-block;
+            background: var(--xp-blue);
+            padding: 6px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            color: #ffffff !important;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 2px 6px rgba(36, 94, 219, 0.4);
+            transition: all 0.2s ease;
+        }
+        .visit-btn:hover { background: #1a4bb8; box-shadow: 0 4px 10px rgba(36, 94, 219, 0.4); transform: translateY(-1px); }
+        .visit-btn:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(36, 94, 219, 0.3); }
+
+        /* Styled Contact Window */
+        .contact-container { text-align: center; max-width: 340px; margin: 0 auto; }
+        .contact-container h2 { margin-top: 0; color: var(--xp-blue); font-size: 22px; margin-bottom: 5px; font-weight: 700; }
+        .contact-container > p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        
+        .contact-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+        .contact-list li { 
+            background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px; padding: 12px 15px; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 14px; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .contact-list li:hover { background: #ffffff; box-shadow: 0 3px 10px rgba(0,0,0,0.06); border-color: #d1dcf0; }
+        .contact-list img { width: 20px; height: 20px; }
+        .contact-list a, .contact-list span { color: #333; text-decoration: none; }
+        .contact-list a:hover { color: var(--xp-blue); }
+
+        /* =========================================
+           6. TASKBAR & START MENU
+           ========================================= */
+        #taskbar {
+            position: absolute; bottom: 0; width: 100%; height: 30px;
+            background: var(--xp-taskbar); display: flex; align-items: center; z-index: 9999; border-top: 1px solid rgba(255,255,255,0.3);
+        }
+        #start-btn {
+            width: 100px; height: 100%; background: radial-gradient(circle at 40% 50%, #5cba16 0%, #3c8d0d 100%);
+            border-radius: 0 10px 15px 0; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; font-style: italic; font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); cursor: pointer; margin-right: 10px; box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+        }
+        #start-btn:hover { filter: brightness(1.1); }
+        #task-list { flex-grow: 1; display: flex; gap: 2px; padding-left: 5px; overflow: hidden; }
+        .task-item {
+            width: 150px; height: 24px; background: #3980f4; border-radius: 3px; display: flex; align-items: center; padding: 0 5px; color: white; cursor: pointer; box-shadow: inset 0 1px 5px rgba(255,255,255,0.2); opacity: 0.9; font-size: 11px;
+        }
+        .task-item.active { background: #1e52b7; opacity: 1; font-weight: bold; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
+        .task-item img { width: 16px; margin-right: 5px; }
+        #tray { width: 80px; height: 100%; background: #0b77e9; border-left: 1px solid #104278; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+
+        #start-menu {
+            position: absolute; bottom: 30px; left: 0; width: 380px; height: 450px;
+            background: white; border-radius: 5px 5px 0 0; border: 1px solid #245edb;
+            box-shadow: 4px -4px 10px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 10000;
+        }
+        .sm-header {
+            height: 50px; background: var(--xp-header); border-radius: 5px 5px 0 0;
+            display: flex; align-items: center; padding: 0 10px; color: white; font-weight: bold; font-size: 14px; border-bottom: 2px solid #e5590c;
+        }
+        .sm-header img { width: 36px; height: 36px; border: 2px solid white; border-radius: 3px; margin-right: 10px; object-fit: cover; background: #fff; }
+        .sm-body { display: flex; flex-grow: 1; }
+        .sm-left { width: 50%; padding: 5px; background: white; display: flex; flex-direction: column; }
+        .sm-right { width: 50%; background: #d3e5fa; border-left: 1px solid #9bbadd; padding: 5px; color: #00135d; display: flex; flex-direction: column; }
+        .sm-item { display: flex; align-items: center; padding: 5px; cursor: pointer; height: 36px; color: #333; }
+        .sm-item:hover { background: #316ac5; color: white !important; }
+        .sm-item img { width: 32px; height: 32px; margin-right: 8px; object-fit: contain;}
+        .sm-footer { height: 35px; background: linear-gradient(to bottom, #3d92f5, #1d61d6); display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-wrapper">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Windows_XP_logo.png" width="200" alt="Windows XP">
+            <div class="login-divider"></div>
+            <div class="user-card" onclick="OS.login()">
+                <img src="https://win98icons.alexmeub.com/icons/png/user_world-0.png" alt="User">
+                <div>
+                    <div style="font-size:22px; font-weight:bold;">Akram Lambarki</div>
+                    <div style="font-size:12px; opacity:0.8;">Click to login</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CONTEXT MENU -->
+    <div id="ctx-menu">
+        <div class="ctx-item" onclick="OS.refresh()">Refresh</div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" onclick="Apps.open('properties')">Properties</div>
+    </div>
+
+    <!-- 3. DESKTOP -->
+    <div id="desktop" onclick="OS.toggleStart(false)">
+        <!-- Icons via JS -->
+    </div>
+
+    <!-- 4. START MENU -->
+    <div id="start-menu" onclick="event.stopPropagation()">
+        <div class="sm-header">
+            <img src="https://win98icons.alexmeub.com/icons/png/user_world-0.png" alt="User">
+            <span>Akram Lambarki</span>
+        </div>
+        <div class="sm-body">
+            <div class="sm-left">
+                <div class="sm-item" onclick="Apps.open('projects')">
+                    <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"> <b>My Projects</b>
+                </div>
+                <div class="sm-item" onclick="Apps.open('aboutme')">
+                    <img src="https://win98icons.alexmeub.com/icons/png/help_book_big-0.png"> <b>About Me</b>
+                </div>
+                <div class="sm-item" onclick="Apps.open('resume')">
+                    <img src="https://win98icons.alexmeub.com/icons/png/write_wordpad-1.png"> <b>My Resume</b>
+                </div>
+                <div class="sm-item" onclick="Apps.open('contact')">
+                    <img src="https://win98icons.alexmeub.com/icons/png/address_book-0.png"> <b>Contact</b>
+                </div>
+                <div style="height:1px; background:#ccc; margin:5px 0;"></div>
+                <div class="sm-item" onclick="window.open('https://github.com/LAMBARKI8AKRAM', '_blank')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png"> <b>GitHub</b>
+                </div>
+                <div class="sm-item" onclick="window.open('https://www.linkedin.com/in/lambarki-akram-820b893b6', '_blank')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png"> <b>LinkedIn</b>
+                </div>
+            </div>
+            <div class="sm-right">
+                <div class="sm-item" onclick="Apps.open('projects')"><img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png"> My Documents</div>
+                <div style="height:1px;background:#9bbadd;margin:5px 0"></div>
+                <div class="sm-item" onclick="Apps.open('properties')"><img src="https://win98icons.alexmeub.com/icons/png/settings_gear-0.png"> Properties</div>
+            </div>
+        </div>
+        <div class="sm-footer" onclick="location.reload()">
+            <img src="https://win98icons.alexmeub.com/icons/png/shut_down_cool-0.png" style="width:20px; margin-right:5px;"> Turn Off
+        </div>
+    </div>
+
+    <!-- 5. TASKBAR -->
+    <div id="taskbar">
+        <div id="start-btn" onclick="OS.toggleStart(true)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/20px-Microsoft_logo.svg.png"> start
+        </div>
+        <div id="task-list"></div>
+        <div id="tray">12:00 PM</div>
+    </div>
+
+    <script>
+        const Icons = {
+            projects: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
+            aboutme: "https://win98icons.alexmeub.com/icons/png/help_book_big-0.png",
+            resume: "https://win98icons.alexmeub.com/icons/png/write_wordpad-1.png",
+            contact: "https://win98icons.alexmeub.com/icons/png/address_book-0.png",
+            github: "https://cdn-icons-png.flaticon.com/512/25/25231.png",
+            linkedin: "https://cdn-icons-png.flaticon.com/512/174/174857.png",
+            prop: "https://win98icons.alexmeub.com/icons/png/settings_gear-0.png",
+            email: "https://win98icons.alexmeub.com/icons/png/message_envelope_open-1.png",
+            phone: "https://win98icons.alexmeub.com/icons/png/modem-0.png",
+            app: "https://win98icons.alexmeub.com/icons/png/application_window_blank-0.png"
+        };
+        
+        const Wallpapers = {
+            bliss: "https://archive.org/download/bliss-600dpi/bliss-600dpi.png"
+        };
+
+        const OS = {
+            zIndex: 100,
+
+            init() {
+                setInterval(() => {
+                    const d = new Date();
+                    document.getElementById('tray').innerText = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                }, 1000);
+                this.renderIcons();
+            },
+
+            login() {
+                document.getElementById('login-screen').style.display = 'none';
+                new Audio("https://www.myinstants.com/media/sounds/windows-xp-startup.mp3").play().catch(()=>{});
+                
+                document.getElementById('desktop').oncontextmenu = (e) => {
+                    e.preventDefault();
+                    const m = document.getElementById('ctx-menu');
+                    m.style.display = 'block'; m.style.left = e.clientX + 'px'; m.style.top = e.clientY + 'px';
+                };
+                document.getElementById('desktop').addEventListener('click', () => {
+                     document.getElementById('ctx-menu').style.display = 'none';
+                });
+            },
+
+            renderIcons() {
+                const d = document.getElementById('desktop');
+                d.innerHTML = '';
+                this.createIcon(d, "My Projects", Icons.projects, () => Apps.open('projects'));
+                this.createIcon(d, "About Me", Icons.aboutme, () => Apps.open('aboutme'));
+                this.createIcon(d, "My Resume", Icons.resume, () => Apps.open('resume'));
+                this.createIcon(d, "Contact", Icons.contact, () => Apps.open('contact'));
+                this.createIcon(d, "GitHub", Icons.github, () => window.open('https://github.com/LAMBARKI8AKRAM', '_blank'));
+                this.createIcon(d, "LinkedIn", Icons.linkedin, () => window.open('https://www.linkedin.com/in/lambarki-akram-820b893b6', '_blank'));
+            },
+
+            createIcon(parent, name, src, action) {
+                const el = document.createElement('div');
+                el.className = 'icon';
+                el.innerHTML = `<img src="${src}"><span>${name}</span>`;
+                el.ondblclick = action;
+                
+                let touchTime = 0;
+                el.ontouchend = (e) => {
+                    let now = new Date().getTime();
+                    let timesince = now - touchTime;
+                    if((timesince < 400) && (timesince > 0)){
+                        action();
+                        e.preventDefault();
+                    }
+                    touchTime = new Date().getTime();
+                };
+                parent.appendChild(el);
+            },
+
+            toggleStart(force) {
+                const sm = document.getElementById('start-menu');
+                if(typeof force === 'boolean') {
+                    if(force) { sm.style.display = sm.style.display === 'flex' ? 'none' : 'flex'; event.stopPropagation(); }
+                    else { sm.style.display = 'none'; }
+                }
+            },
+
+            refresh() {
+                const d = document.getElementById('desktop');
+                d.style.opacity = '0.5';
+                setTimeout(() => d.style.opacity='1', 200);
+                document.getElementById('ctx-menu').style.display = 'none';
+            },
+
+            setWallpaper(url) { if(url) document.getElementById('desktop').style.backgroundImage = `url('${url}')`; }
+        };
+
+        const WinMgr = {
+            create(title, icon, w, h, content) {
+                OS.toggleStart(false);
+                const id = 'win-' + Date.now() + Math.floor(Math.random()*1000);
+                const win = document.createElement('div');
+                win.className = 'window';
+                win.id = id;
+                win.style.width = w + 'px'; win.style.height = h + 'px';
+                win.style.zIndex = ++OS.zIndex;
+
+                win.innerHTML = `
+                    <div class="title-bar" onmousedown="WinMgr.drag(event, '${id}')">
+                        <div style="display:flex;align-items:center"><img src="${icon}" width="16" style="margin-right:5px"> ${title}</div>
+                        <div class="win-controls">
+                            <div class="win-btn" onclick="document.getElementById('${id}').style.display='none'">_</div>
+                            <div class="win-btn" onclick="WinMgr.maximize('${id}')">□</div>
+                            <div class="win-btn close" onclick="WinMgr.close('${id}')">X</div>
+                        </div>
+                    </div>
+                    <div class="window-body">${content}</div>
+                `;
+                win.onmousedown = () => WinMgr.focus(id);
+                document.body.appendChild(win);
+                this.addTask(id, title, icon);
+            },
+
+            close(id) { 
+                const win = document.getElementById(id);
+                if (win) win.remove(); 
+                const task = document.getElementById('task-' + id);
+                if (task) task.remove(); 
+            },
+            focus(id) { 
+                const win = document.getElementById(id);
+                if (win) {
+                    win.style.zIndex = ++OS.zIndex; 
+                    document.querySelectorAll('.task-item').forEach(t => t.classList.remove('active')); 
+                    const task = document.getElementById('task-' + id);
+                    if (task) task.classList.add('active'); 
+                }
+            },
+            maximize(id) {
+                const win = document.getElementById(id);
+                if(win.style.width === '100%') { win.style.width = '600px'; win.style.height = '400px'; win.style.top='50px'; win.style.left='50px'; }
+                else { win.style.width = '100%'; win.style.height = 'calc(100% - 30px)'; win.style.top='0'; win.style.left='0'; }
+            },
+            addTask(id, title, icon) {
+                const task = document.createElement('div');
+                task.className = 'task-item active'; task.id = 'task-' + id;
+                task.innerHTML = `<img src="${icon}">${title}`;
+                task.onclick = () => { const w = document.getElementById(id); if(w.style.display==='none'){w.style.display='flex'; WinMgr.focus(id);} else {w.style.display='none';} };
+                document.getElementById('task-list').appendChild(task);
+            },
+            drag(e, id) {
+                const win = document.getElementById(id);
+                if(win.style.width==='100%') return;
+                let startX = e.clientX - win.offsetLeft; let startY = e.clientY - win.offsetTop;
+                const move = (ev) => { win.style.left = (ev.clientX - startX) + 'px'; win.style.top = (ev.clientY - startY) + 'px'; };
+                const stop = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', stop); };
+                document.addEventListener('mousemove', move); document.addEventListener('mouseup', stop);
+            }
+        };
+
+        const Apps = {
+            open(app, arg) {
+                if(app === 'aboutme') {
+                    WinMgr.create("About Me", Icons.aboutme, 500, 400, `
+                        <div class="portfolio-content">
+                            <div class="portfolio-header">
+                                <h1>Akram Lambarki</h1>
+                                <h3>Full Stack Developer</h3>
+                            </div>
+                            <p>I am a passionate Full Stack Developer specialized in building modern web applications using Laravel, React, PHP, and JavaScript.</p>
+                            <div class="skills-container">
+                                <b>Technical Skills:</b><br><br>
+                                <span class="skill-tag">HTML, CSS, JavaScript, PHP</span>
+                                <span class="skill-tag">Python & Java</span>
+                                <span class="skill-tag">MySQL</span>
+                                <span class="skill-tag">Frontend & Backend</span>
+                            </div>
+                        </div>`);
+                } else if(app === 'projects') {
+                    WinMgr.create("My Projects", Icons.projects, 550, 480, `
+                        <div class="portfolio-content">
+                            <h2 style="margin-top:0; color:var(--xp-blue); font-size: 22px; font-weight: 700;">My Projects</h2>
+                            <p style="margin-bottom: 20px; color:#555;">Here are some of my featured applications:</p>
+                            
+                            <div class="project-cards-container">
+                                <div class="project-card">
+                                    <img src="${Icons.app}" alt="App">
+                                    <div class="project-info">
+                                        <h4>Openmark.ma</h4>
+                                        <p>Marketplace web application built for scalable ecommerce interactions.</p>
+                                        <a href="https://openmark.ma" target="_blank" class="visit-btn" onclick="event.stopPropagation();">Visit Project</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="project-card">
+                                    <img src="${Icons.app}" alt="App">
+                                    <div class="project-info">
+                                        <h4>HR Management System</h4>
+                                        <p>A comprehensive system designed to handle human resources processes smoothly and efficiently.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="project-card">
+                                    <img src="${Icons.app}" alt="App">
+                                    <div class="project-info">
+                                        <h4>Parfum E-commerce Website</h4>
+                                        <p>An elegant and modern e-commerce platform specifically tailored for fragrance products.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`);
+                } else if(app === 'resume') {
+                    WinMgr.create("My Resume - cv.pdf", Icons.resume, 800, 650, `
+                        <div class="portfolio-content" style="height:100%; display:flex; flex-direction:column;">
+                            <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                                <h2 style="margin:0; color:var(--xp-blue); font-size: 20px;">Curriculum Vitae</h2>
+                                <div style="display:flex; gap:10px;">
+                                    <a href="cv.pdf" download class="visit-btn" style="text-decoration:none;">Download CV</a>
+                                    <button class="visit-btn" style="background:#f44336; box-shadow: 0 2px 6px rgba(244, 67, 54, 0.4);" onclick="WinMgr.close(this.closest('.window').id)">Close Window</button>
+                                </div>
+                            </div>
+                            <div style="flex-grow:1; border:1px solid #ccc; background:#eee; position:relative;">
+                                <iframe src="cv.pdf" style="width:100%; height:100%; border:none;"></iframe>
+                            </div>
+                        </div>`);
+                } else if(app === 'contact') {
+                    WinMgr.create("Contact Me", Icons.contact, 420, 360, `
+                        <div class="portfolio-content contact-container">
+                            <h2>Get In Touch</h2>
+                            <p>Feel free to reach out to me for collaboration or inquiries</p>
+                            
+                            <ul class="contact-list">
+                                <li>
+                                    <img src="${Icons.email}" alt="Email">
+                                    <a href="mailto:lambarkiakram123@gmail.com">lambarkiakram123@gmail.com</a>
+                                </li>
+                                <li>
+                                    <img src="${Icons.phone}" alt="Phone">
+                                    <span>0684889944</span>
+                                </li>
+                                <li>
+                                    <img src="${Icons.github}" alt="GitHub">
+                                    <a href="https://github.com/LAMBARKI8AKRAM" target="_blank">LAMBARKI8AKRAM</a>
+                                </li>
+                                <li>
+                                    <img src="${Icons.linkedin}" alt="LinkedIn">
+                                    <a href="https://www.linkedin.com/in/lambarki-akram-820b893b6" target="_blank">lambarki-akram-820b893b6</a>
+                                </li>
+                            </ul>
+                        </div>`);
+                } else if(app === 'properties') {
+                    const pid = 'prev-' + Date.now();
+                    WinMgr.create("Properties", Icons.prop, 350, 420, `
+                        <div style="padding:15px;"><div class="prop-preview"><div id="${pid}" class="prop-screen" style="background-image:url('${Wallpapers.bliss}')"></div></div>
+                        <fieldset style="margin-top:20px; padding:10px;"><legend>Background</legend>
+                        <select onchange="document.getElementById('${pid}').style.backgroundImage='url('+this.value+')'; OS.temp=this.value;" style="width:100%"><option value="${Wallpapers.bliss}">Bliss</option></select>
+                        <button style="margin-top:10px;" onclick="OS.setWallpaper(OS.temp); WinMgr.close(this.closest('.window').id)">Apply</button></fieldset></div>`);
+                }
+            }
+        };
+
+        OS.init();
+    </script>
+</body>
+</html>

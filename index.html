@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Akram Lambarki - Portfolio</title>
     <style>
         /* =========================================
@@ -13,6 +13,7 @@
             --xp-taskbar: linear-gradient(to bottom, #245edb 0%, #3f8cf3 10%, #245edb 90%, #153c94 100%);
             --xp-header: linear-gradient(to bottom, #0058ee 0%, #3593ff 4%, #288eff 18%, #127dff 20%, #036dff 23%, #0051e8 86%, #002fbf 100%);
             --xp-bg: #ece9d8;
+            --taskbar-h: 36px;
         }
 
         * { box-sizing: border-box; user-select: none; }
@@ -23,40 +24,67 @@
         }
 
         /* =========================================
-           2. SCREENS (LOGIN & BOOT)
+           2. LOGIN SCREEN
            ========================================= */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100000;
-            background: #003399; display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             background: linear-gradient(to right, #003399 0%, #003399 50%, #46a2da 100%);
+            padding: 20px;
         }
-        .login-wrapper { display: flex; align-items: center; gap: 30px; }
-        .login-divider { width: 2px; height: 150px; background: linear-gradient(to bottom, transparent, white, transparent); }
-        .user-card { 
-            display: flex; align-items: center; gap: 15px; padding: 10px 20px; color: white; 
-            border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: 0.2s; 
+        .login-wrapper {
+            display: flex; align-items: center; gap: 30px;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .login-logo { max-width: 180px; width: 100%; height: auto; }
+        .login-divider {
+            width: 2px; height: 150px;
+            background: linear-gradient(to bottom, transparent, white, transparent);
+        }
+        .user-card {
+            display: flex; align-items: center; gap: 15px; padding: 10px 20px; color: white;
+            border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: 0.2s;
         }
         .user-card:hover { background: rgba(255,165,0,0.2); border-color: orange; }
-        .user-card img { width: 64px; height: 64px; border: 2px solid white; border-radius: 5px; object-fit: cover; background: #fff; }
+        .user-card img {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            object-fit: cover;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(255,165,0,0.4), 0 8px 24px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex-shrink: 0;
+        }
+        .user-card:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 5px rgba(255,165,0,0.7), 0 12px 30px rgba(0,0,0,0.6);
+        }
+        .user-name { font-size: clamp(16px, 4vw, 22px); font-weight: bold; }
+        .user-hint { font-size: 12px; opacity: 0.8; }
 
         /* =========================================
            3. DESKTOP & ICONS
            ========================================= */
         #desktop {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 30px);
+            position: absolute; top: 0; left: 0; width: 100%;
+            height: calc(100% - var(--taskbar-h));
             background: url('https://archive.org/download/bliss-600dpi/bliss-600dpi.png') no-repeat center center fixed;
             background-size: cover;
             display: flex; flex-direction: column; flex-wrap: wrap; align-content: flex-start;
             padding: 10px; z-index: 1;
+            overflow: hidden;
         }
 
         .icon {
-            width: 80px; text-align: center; color: white; margin-bottom: 20px;
+            width: 75px; text-align: center; color: white; margin-bottom: 15px;
             text-shadow: 1px 1px 2px black; border: 1px solid transparent; padding: 5px;
             cursor: pointer; display: flex; flex-direction: column; align-items: center;
+            font-size: 11px;
         }
         .icon:hover { background: rgba(11, 97, 255, 0.2); border-color: rgba(11, 97, 255, 0.5); border-radius: 3px; }
-        .icon img { width: 48px; height: 48px; margin-bottom: 5px; pointer-events: none; object-fit: contain; }
+        .icon img { width: 40px; height: 40px; margin-bottom: 4px; pointer-events: none; object-fit: contain; }
+        .icon span { word-break: break-word; line-height: 1.3; }
 
         /* =========================================
            4. CONTEXT MENU
@@ -65,7 +93,7 @@
             position: absolute; width: 180px; background: white; border: 1px solid #aca899;
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3); display: none; z-index: 999999;
         }
-        .ctx-item { padding: 4px 25px 4px 15px; cursor: pointer; font-size: 11px; display: flex; justify-content: space-between; }
+        .ctx-item { padding: 6px 25px 6px 15px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; }
         .ctx-item:hover { background: #316ac5; color: white; }
         .ctx-sep { height: 1px; background: #ddd; margin: 2px 5px; }
 
@@ -79,55 +107,69 @@
             display: flex; flex-direction: column;
             padding: 3px; padding-bottom: 0;
             background-color: #0055ea;
-            min-width: 300px; min-height: 200px;
+            min-width: 280px; min-height: 180px;
             top: 50px; left: 50px;
+            /* Ensure windows don't go off-screen on small devices */
+            max-width: calc(100vw - 10px);
+            max-height: calc(100vh - var(--taskbar-h) - 10px);
         }
         .title-bar {
-            height: 30px; background: var(--xp-header);
+            height: 28px; background: var(--xp-header);
             border-radius: 5px 5px 0 0; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 8px; color: white; font-weight: bold; text-shadow: 1px 1px #0f306d;
+            padding: 0 6px; color: white; font-weight: bold; text-shadow: 1px 1px #0f306d;
+            flex-shrink: 0;
         }
-        .win-controls { display: flex; gap: 3px; }
+        .title-bar-left { display: flex; align-items: center; overflow: hidden; }
+        .title-bar-left img { width: 14px; height: 14px; margin-right: 5px; flex-shrink: 0; }
+        .title-bar-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+        .win-controls { display: flex; gap: 2px; flex-shrink: 0; }
         .win-btn {
-            width: 21px; height: 21px; border: 1px solid white; border-radius: 3px;
+            width: 22px; height: 22px; border: 1px solid white; border-radius: 3px;
             background: linear-gradient(to bottom, #fff 0%, #ece9d8 100%);
             display: flex; align-items: center; justify-content: center; cursor: pointer;
-            font-family: sans-serif; font-size: 10px; color: black; opacity: 0.9;
+            font-family: sans-serif; font-size: 11px; color: black; opacity: 0.9;
+            touch-action: manipulation;
         }
         .win-btn:hover { opacity: 1; filter: brightness(1.1); }
         .win-btn.close { background: #e0422e; color: white; font-weight: bold; font-size: 14px; }
-        .window-body { flex-grow: 1; background: white; border: 1px solid white; border-top: none; position: relative; overflow: auto; padding: 20px; user-select: text; font-size: 13px;}
-        
+        .window-body {
+            flex-grow: 1; background: white; border: 1px solid white; border-top: none;
+            position: relative; overflow: auto; padding: 16px; user-select: text; font-size: 13px;
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* App Specific Styles */
-        .prop-preview { width: 150px; height: 110px; background: #333; margin: 10px auto; border: 10px solid #ddd; border-radius: 10px 10px 0 0; position: relative; }
+        .prop-preview { width: 130px; height: 95px; background: #333; margin: 10px auto; border: 8px solid #ddd; border-radius: 8px 8px 0 0; position: relative; }
         .prop-screen { width: 90%; height: 85%; background: black; margin: 0 auto; margin-top: 5px; background-size: cover; background-position: center; }
 
-        /* Custom Portfolio Styles - Modern & Clean */
+        /* =========================================
+           PORTFOLIO WINDOW CONTENT STYLES
+           ========================================= */
         .portfolio-content { font-family: 'Segoe UI', 'Tahoma', Arial, sans-serif; color: #333; line-height: 1.6; }
-        .portfolio-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
-        .portfolio-header h1 { margin: 0; font-size: 26px; color: var(--xp-blue); font-weight: 700; letter-spacing: -0.5px; }
-        .portfolio-header h3 { margin: 5px 0 0; font-size: 15px; font-weight: 500; color: #666; }
-        
-        .skills-container { margin-top: 20px; }
-        .skill-tag { display: inline-block; background: #edf2f9; border: 1px solid #d4e2f4; color: #1e4b9c; padding: 5px 12px; margin: 4px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-        
-        .project-cards-container { display: flex; flex-direction: column; gap: 18px; }
-        .project-card { 
-            background: #ffffff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 18px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 18px; 
+        .portfolio-header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 12px; }
+        .portfolio-header h1 { margin: 0; font-size: clamp(18px, 5vw, 26px); color: var(--xp-blue); font-weight: 700; letter-spacing: -0.5px; }
+        .portfolio-header h3 { margin: 5px 0 0; font-size: clamp(12px, 3vw, 15px); font-weight: 500; color: #666; }
+
+        .skills-container { margin-top: 16px; }
+        .skill-tag { display: inline-block; background: #edf2f9; border: 1px solid #d4e2f4; color: #1e4b9c; padding: 5px 12px; margin: 3px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+        .project-cards-container { display: flex; flex-direction: column; gap: 14px; }
+        .project-card {
+            background: #ffffff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; align-items: flex-start; gap: 14px;
             transition: all 0.2s ease-in-out;
         }
         .project-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); border-color: #d1dcf0; }
-        .project-card img { width: 45px; height: 45px; object-fit: contain; }
-        .project-info { flex-grow: 1; }
-        .project-info h4 { margin: 0 0 6px 0; color: #222; font-size: 16px; font-weight: 600; }
-        .project-info p { margin: 0 0 12px 0; color: #555; font-size: 13px; line-height: 1.5; }
-        
+        .project-card > img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+        .project-info { flex-grow: 1; min-width: 0; }
+        .project-info h4 { margin: 0 0 4px 0; color: #222; font-size: clamp(13px, 3vw, 16px); font-weight: 600; }
+        .project-info p { margin: 0 0 10px 0; color: #555; font-size: clamp(11px, 2.5vw, 13px); line-height: 1.5; }
+
         /* Modern Clean Button */
         .visit-btn {
             display: inline-block;
             background: var(--xp-blue);
-            padding: 6px 18px;
+            padding: 6px 16px;
             font-size: 12px;
             font-weight: 600;
             font-family: inherit;
@@ -138,65 +180,226 @@
             border: none;
             box-shadow: 0 2px 6px rgba(36, 94, 219, 0.4);
             transition: all 0.2s ease;
+            touch-action: manipulation;
+            white-space: nowrap;
         }
         .visit-btn:hover { background: #1a4bb8; box-shadow: 0 4px 10px rgba(36, 94, 219, 0.4); transform: translateY(-1px); }
         .visit-btn:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(36, 94, 219, 0.3); }
 
         /* Styled Contact Window */
         .contact-container { text-align: center; max-width: 340px; margin: 0 auto; }
-        .contact-container h2 { margin-top: 0; color: var(--xp-blue); font-size: 22px; margin-bottom: 5px; font-weight: 700; }
-        .contact-container > p { color: #666; font-size: 14px; margin-bottom: 25px; }
-        
-        .contact-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-        .contact-list li { 
-            background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px; padding: 12px 15px; 
-            display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 14px; font-weight: 500;
-            transition: all 0.2s ease;
+        .contact-container h2 { margin-top: 0; color: var(--xp-blue); font-size: clamp(16px, 5vw, 22px); margin-bottom: 5px; font-weight: 700; }
+        .contact-container > p { color: #666; font-size: 13px; margin-bottom: 20px; }
+
+        .contact-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .contact-list li {
+            background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px; padding: 10px 12px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: clamp(11px, 2.8vw, 14px); font-weight: 500;
+            transition: all 0.2s ease; flex-wrap: wrap; word-break: break-all;
         }
         .contact-list li:hover { background: #ffffff; box-shadow: 0 3px 10px rgba(0,0,0,0.06); border-color: #d1dcf0; }
-        .contact-list img { width: 20px; height: 20px; }
+        .contact-list img { width: 18px; height: 18px; flex-shrink: 0; }
         .contact-list a, .contact-list span { color: #333; text-decoration: none; }
         .contact-list a:hover { color: var(--xp-blue); }
+
+        /* Resume window header */
+        .resume-header {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+        }
+        .resume-header h2 { margin: 0; color: var(--xp-blue); font-size: clamp(14px, 4vw, 20px); }
+        .resume-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
         /* =========================================
            6. TASKBAR & START MENU
            ========================================= */
         #taskbar {
-            position: absolute; bottom: 0; width: 100%; height: 30px;
-            background: var(--xp-taskbar); display: flex; align-items: center; z-index: 9999; border-top: 1px solid rgba(255,255,255,0.3);
+            position: absolute; bottom: 0; width: 100%; height: var(--taskbar-h);
+            background: var(--xp-taskbar); display: flex; align-items: center; z-index: 9999;
+            border-top: 1px solid rgba(255,255,255,0.3);
         }
         #start-btn {
-            width: 100px; height: 100%; background: radial-gradient(circle at 40% 50%, #5cba16 0%, #3c8d0d 100%);
+            height: 100%; background: radial-gradient(circle at 40% 50%, #5cba16 0%, #3c8d0d 100%);
             border-radius: 0 10px 15px 0; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: bold; font-style: italic; font-size: 14px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); cursor: pointer; margin-right: 10px; box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+            color: white; font-weight: bold; font-style: italic; font-size: 13px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); cursor: pointer; margin-right: 8px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.4); padding: 0 14px; gap: 5px;
+            white-space: nowrap; touch-action: manipulation;
         }
         #start-btn:hover { filter: brightness(1.1); }
-        #task-list { flex-grow: 1; display: flex; gap: 2px; padding-left: 5px; overflow: hidden; }
+        #task-list { flex-grow: 1; display: flex; gap: 2px; padding-left: 4px; overflow: hidden; }
         .task-item {
-            width: 150px; height: 24px; background: #3980f4; border-radius: 3px; display: flex; align-items: center; padding: 0 5px; color: white; cursor: pointer; box-shadow: inset 0 1px 5px rgba(255,255,255,0.2); opacity: 0.9; font-size: 11px;
+            max-width: 140px; min-width: 60px; height: 26px; background: #3980f4; border-radius: 3px;
+            display: flex; align-items: center; padding: 0 6px; color: white; cursor: pointer;
+            box-shadow: inset 0 1px 5px rgba(255,255,255,0.2); opacity: 0.9; font-size: 11px;
+            overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+            touch-action: manipulation;
         }
         .task-item.active { background: #1e52b7; opacity: 1; font-weight: bold; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
-        .task-item img { width: 16px; margin-right: 5px; }
-        #tray { width: 80px; height: 100%; background: #0b77e9; border-left: 1px solid #104278; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .task-item img { width: 14px; height: 14px; margin-right: 4px; flex-shrink: 0; }
+        #tray {
+            height: 100%; background: #0b77e9; border-left: 1px solid #104278; color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 11px;
+            padding: 0 10px; white-space: nowrap;
+        }
 
+        /* Start Menu */
         #start-menu {
-            position: absolute; bottom: 30px; left: 0; width: 380px; height: 450px;
+            position: absolute; bottom: var(--taskbar-h); left: 0;
+            width: min(380px, 98vw);
+            max-height: calc(100vh - var(--taskbar-h) - 10px);
             background: white; border-radius: 5px 5px 0 0; border: 1px solid #245edb;
             box-shadow: 4px -4px 10px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 10000;
+            overflow: hidden;
         }
         .sm-header {
-            height: 50px; background: var(--xp-header); border-radius: 5px 5px 0 0;
-            display: flex; align-items: center; padding: 0 10px; color: white; font-weight: bold; font-size: 14px; border-bottom: 2px solid #e5590c;
+            background: var(--xp-header); border-radius: 5px 5px 0 0;
+            display: flex; align-items: center; padding: 8px 10px; color: white;
+            font-weight: bold; font-size: 14px; border-bottom: 2px solid #e5590c; flex-shrink: 0;
         }
-        .sm-header img { width: 36px; height: 36px; border: 2px solid white; border-radius: 3px; margin-right: 10px; object-fit: cover; background: #fff; }
-        .sm-body { display: flex; flex-grow: 1; }
-        .sm-left { width: 50%; padding: 5px; background: white; display: flex; flex-direction: column; }
-        .sm-right { width: 50%; background: #d3e5fa; border-left: 1px solid #9bbadd; padding: 5px; color: #00135d; display: flex; flex-direction: column; }
-        .sm-item { display: flex; align-items: center; padding: 5px; cursor: pointer; height: 36px; color: #333; }
+        .sm-header img {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            margin-right: 10px;
+            object-fit: cover;
+            object-position: center top;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+        .sm-header span { font-size: clamp(12px, 3vw, 14px); }
+        .sm-body { display: flex; flex-grow: 1; overflow: hidden; }
+        .sm-left { width: 50%; padding: 4px; background: white; display: flex; flex-direction: column; overflow-y: auto; }
+        .sm-right { width: 50%; background: #d3e5fa; border-left: 1px solid #9bbadd; padding: 4px; color: #00135d; display: flex; flex-direction: column; overflow-y: auto; }
+        .sm-item { display: flex; align-items: center; padding: 5px 6px; cursor: pointer; min-height: 36px; color: #333; font-size: 12px; touch-action: manipulation; }
         .sm-item:hover { background: #316ac5; color: white !important; }
-        .sm-item img { width: 32px; height: 32px; margin-right: 8px; object-fit: contain;}
-        .sm-footer { height: 35px; background: linear-gradient(to bottom, #3d92f5, #1d61d6); display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; cursor: pointer; }
+        .sm-item:hover * { color: white !important; }
+        .sm-item img { width: 28px; height: 28px; margin-right: 7px; object-fit: contain; flex-shrink: 0; }
+        .sm-footer {
+            background: linear-gradient(to bottom, #3d92f5, #1d61d6);
+            display: flex; align-items: center; justify-content: flex-end; padding: 0 12px;
+            color: white; cursor: pointer; height: 32px; flex-shrink: 0; font-size: 12px;
+        }
+        .sm-footer img { width: 18px; margin-right: 5px; }
+
+        /* =========================================
+           7. RESPONSIVE — TABLET (≤768px)
+           ========================================= */
+        @media (max-width: 768px) {
+            :root { --taskbar-h: 40px; }
+
+            /* Login */
+            .login-logo { max-width: 140px; }
+            .login-divider { height: 100px; }
+            .user-card img { width: 72px; height: 72px; }
+
+            /* Desktop icons: 2-column grid on tablets */
+            #desktop {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-content: flex-start;
+                gap: 5px;
+            }
+            .icon { width: 68px; margin-bottom: 8px; font-size: 10px; }
+            .icon img { width: 38px; height: 38px; }
+
+            /* Windows — full width on tablet */
+            .window {
+                top: 5px !important;
+                left: 5px !important;
+                width: calc(100vw - 10px) !important;
+                height: calc(100vh - var(--taskbar-h) - 10px) !important;
+                min-width: unset;
+            }
+
+            /* Start menu */
+            #start-menu { width: min(340px, 95vw); }
+            .sm-item { min-height: 40px; font-size: 13px; }
+            .sm-item img { width: 30px; height: 30px; }
+
+            /* Taskbar */
+            #start-btn { font-size: 12px; padding: 0 10px; }
+            .task-item { max-width: 110px; font-size: 10px; }
+        }
+
+        /* =========================================
+           8. RESPONSIVE — MOBILE (≤480px)
+           ========================================= */
+        @media (max-width: 480px) {
+            :root { --taskbar-h: 44px; }
+
+            /* Login — stacked vertically on phones */
+            .login-wrapper { flex-direction: column; gap: 16px; align-items: center; }
+            .login-divider { width: 120px; height: 2px; }
+            .login-logo { max-width: 120px; }
+            .user-card { flex-direction: column; text-align: center; gap: 10px; padding: 12px; }
+            .user-card img { width: 80px; height: 80px; }
+            .user-name { font-size: 18px; }
+
+            /* Desktop icons: 3-per-row flow on small screens */
+            #desktop { padding: 6px; }
+            .icon { width: 64px; margin-bottom: 6px; font-size: 9px; }
+            .icon img { width: 34px; height: 34px; }
+
+            /* Windows fill almost entire screen */
+            .window {
+                top: 2px !important;
+                left: 2px !important;
+                width: calc(100vw - 4px) !important;
+                height: calc(100vh - var(--taskbar-h) - 4px) !important;
+                min-width: unset;
+                border-radius: 5px 5px 0 0;
+            }
+            .window-body { padding: 12px; }
+
+            /* Start menu full width */
+            #start-menu { width: 100vw; border-radius: 0; }
+            .sm-item { min-height: 44px; font-size: 13px; }
+
+            /* Taskbar: hide task items text, show only icons */
+            #start-btn { font-size: 11px; padding: 0 8px; gap: 3px; }
+            #start-btn img { width: 16px; }
+            .task-item { max-width: 80px; font-size: 9px; }
+            #tray { font-size: 10px; padding: 0 8px; }
+
+            /* Portfolio content inside windows */
+            .portfolio-header h1 { font-size: 20px; }
+            .portfolio-header h3 { font-size: 13px; }
+            .project-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .project-card > img { width: 32px; height: 32px; }
+            .contact-container { max-width: 100%; }
+            .resume-header { flex-direction: column; align-items: flex-start; }
+            .resume-btns { width: 100%; }
+            .visit-btn { width: 100%; text-align: center; }
+        }
+
+        /* =========================================
+           9. RESPONSIVE — VERY SMALL (≤360px)
+           ========================================= */
+        @media (max-width: 360px) {
+            .icon { width: 56px; font-size: 8px; }
+            .icon img { width: 30px; height: 30px; }
+            .user-card img { width: 68px; height: 68px; }
+            .sm-header img { width: 34px; height: 34px; }
+            .sm-item img { width: 24px; height: 24px; }
+        }
+
+        /* =========================================
+           10. TOUCH & INTERACTION IMPROVEMENTS
+           ========================================= */
+        @media (hover: none) {
+            /* On touch devices, remove hover-only transforms to avoid sticky states */
+            .project-card:hover { transform: none; }
+            .visit-btn:hover { transform: none; }
+        }
+
+        /* Smooth scrolling inside window bodies */
+        .window-body { scroll-behavior: smooth; }
+
+        /* Prevent overflow on all content */
+        img { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
@@ -204,13 +407,13 @@
     <!-- 1. LOGIN SCREEN -->
     <div id="login-screen">
         <div class="login-wrapper">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Windows_XP_logo.png" width="200" alt="Windows XP">
+            <img class="login-logo" src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Windows_XP_logo.png" alt="Windows XP">
             <div class="login-divider"></div>
             <div class="user-card" onclick="OS.login()">
-                <img src="https://win98icons.alexmeub.com/icons/png/user_world-0.png" alt="User">
+                <img src="profile.jpg" alt="Akram Lambarki">
                 <div>
-                    <div style="font-size:22px; font-weight:bold;">Akram Lambarki</div>
-                    <div style="font-size:12px; opacity:0.8;">Click to login</div>
+                    <div class="user-name">Akram Lambarki</div>
+                    <div class="user-hint">Click to login</div>
                 </div>
             </div>
         </div>
@@ -231,7 +434,7 @@
     <!-- 4. START MENU -->
     <div id="start-menu" onclick="event.stopPropagation()">
         <div class="sm-header">
-            <img src="https://win98icons.alexmeub.com/icons/png/user_world-0.png" alt="User">
+            <img src="profile.jpg" alt="Akram Lambarki" style="object-position: center top;">
             <span>Akram Lambarki</span>
         </div>
         <div class="sm-body">
@@ -248,7 +451,7 @@
                 <div class="sm-item" onclick="Apps.open('contact')">
                     <img src="https://win98icons.alexmeub.com/icons/png/address_book-0.png"> <b>Contact</b>
                 </div>
-                <div style="height:1px; background:#ccc; margin:5px 0;"></div>
+                <div style="height:1px; background:#ccc; margin:4px 0;"></div>
                 <div class="sm-item" onclick="window.open('https://github.com/LAMBARKI8AKRAM', '_blank')">
                     <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png"> <b>GitHub</b>
                 </div>
@@ -258,12 +461,12 @@
             </div>
             <div class="sm-right">
                 <div class="sm-item" onclick="Apps.open('projects')"><img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-4.png"> My Documents</div>
-                <div style="height:1px;background:#9bbadd;margin:5px 0"></div>
+                <div style="height:1px;background:#9bbadd;margin:4px 0"></div>
                 <div class="sm-item" onclick="Apps.open('properties')"><img src="https://win98icons.alexmeub.com/icons/png/settings_gear-0.png"> Properties</div>
             </div>
         </div>
         <div class="sm-footer" onclick="location.reload()">
-            <img src="https://win98icons.alexmeub.com/icons/png/shut_down_cool-0.png" style="width:20px; margin-right:5px;"> Turn Off
+            <img src="https://win98icons.alexmeub.com/icons/png/shut_down_cool-0.png"> Turn Off
         </div>
     </div>
 
@@ -279,20 +482,24 @@
     <script>
         const Icons = {
             projects: "https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png",
-            aboutme: "https://win98icons.alexmeub.com/icons/png/help_book_big-0.png",
-            resume: "https://win98icons.alexmeub.com/icons/png/write_wordpad-1.png",
-            contact: "https://win98icons.alexmeub.com/icons/png/address_book-0.png",
-            github: "https://cdn-icons-png.flaticon.com/512/25/25231.png",
+            aboutme:  "https://win98icons.alexmeub.com/icons/png/help_book_big-0.png",
+            resume:   "https://win98icons.alexmeub.com/icons/png/write_wordpad-1.png",
+            contact:  "https://win98icons.alexmeub.com/icons/png/address_book-0.png",
+            github:   "https://cdn-icons-png.flaticon.com/512/25/25231.png",
             linkedin: "https://cdn-icons-png.flaticon.com/512/174/174857.png",
-            prop: "https://win98icons.alexmeub.com/icons/png/settings_gear-0.png",
-            email: "https://win98icons.alexmeub.com/icons/png/message_envelope_open-1.png",
-            phone: "https://win98icons.alexmeub.com/icons/png/modem-0.png",
-            app: "https://win98icons.alexmeub.com/icons/png/application_window_blank-0.png"
+            prop:     "https://win98icons.alexmeub.com/icons/png/settings_gear-0.png",
+            email:    "https://win98icons.alexmeub.com/icons/png/message_envelope_open-1.png",
+            phone:    "https://win98icons.alexmeub.com/icons/png/modem-0.png",
+            app:      "https://win98icons.alexmeub.com/icons/png/application_window_blank-0.png"
         };
-        
+
         const Wallpapers = {
             bliss: "https://archive.org/download/bliss-600dpi/bliss-600dpi.png"
         };
+
+        /* ---- Helpers ---- */
+        const isMobile = () => window.innerWidth <= 480;
+        const isTablet = () => window.innerWidth <= 768;
 
         const OS = {
             zIndex: 100,
@@ -308,14 +515,18 @@
             login() {
                 document.getElementById('login-screen').style.display = 'none';
                 new Audio("https://www.myinstants.com/media/sounds/windows-xp-startup.mp3").play().catch(()=>{});
-                
+
                 document.getElementById('desktop').oncontextmenu = (e) => {
                     e.preventDefault();
                     const m = document.getElementById('ctx-menu');
-                    m.style.display = 'block'; m.style.left = e.clientX + 'px'; m.style.top = e.clientY + 'px';
+                    m.style.display = 'block';
+                    /* Keep menu inside viewport */
+                    const mw = 180, mh = 80;
+                    m.style.left = Math.min(e.clientX, window.innerWidth - mw) + 'px';
+                    m.style.top  = Math.min(e.clientY, window.innerHeight - mh) + 'px';
                 };
                 document.getElementById('desktop').addEventListener('click', () => {
-                     document.getElementById('ctx-menu').style.display = 'none';
+                    document.getElementById('ctx-menu').style.display = 'none';
                 });
             },
 
@@ -323,11 +534,11 @@
                 const d = document.getElementById('desktop');
                 d.innerHTML = '';
                 this.createIcon(d, "My Projects", Icons.projects, () => Apps.open('projects'));
-                this.createIcon(d, "About Me", Icons.aboutme, () => Apps.open('aboutme'));
-                this.createIcon(d, "My Resume", Icons.resume, () => Apps.open('resume'));
-                this.createIcon(d, "Contact", Icons.contact, () => Apps.open('contact'));
-                this.createIcon(d, "GitHub", Icons.github, () => window.open('https://github.com/LAMBARKI8AKRAM', '_blank'));
-                this.createIcon(d, "LinkedIn", Icons.linkedin, () => window.open('https://www.linkedin.com/in/lambarki-akram-820b893b6', '_blank'));
+                this.createIcon(d, "About Me",    Icons.aboutme,  () => Apps.open('aboutme'));
+                this.createIcon(d, "My Resume",   Icons.resume,   () => Apps.open('resume'));
+                this.createIcon(d, "Contact",     Icons.contact,  () => Apps.open('contact'));
+                this.createIcon(d, "GitHub",      Icons.github,   () => window.open('https://github.com/LAMBARKI8AKRAM', '_blank'));
+                this.createIcon(d, "LinkedIn",    Icons.linkedin, () => window.open('https://www.linkedin.com/in/lambarki-akram-820b893b6', '_blank'));
             },
 
             createIcon(parent, name, src, action) {
@@ -335,24 +546,28 @@
                 el.className = 'icon';
                 el.innerHTML = `<img src="${src}"><span>${name}</span>`;
                 el.ondblclick = action;
-                
+
+                /* Touch: single tap on mobile, double-tap on tablet+ */
                 let touchTime = 0;
                 el.ontouchend = (e) => {
-                    let now = new Date().getTime();
-                    let timesince = now - touchTime;
-                    if((timesince < 400) && (timesince > 0)){
+                    const now = Date.now();
+                    const diff = now - touchTime;
+                    if (isMobile()) {
+                        action();
+                        e.preventDefault();
+                    } else if (diff < 400 && diff > 0) {
                         action();
                         e.preventDefault();
                     }
-                    touchTime = new Date().getTime();
+                    touchTime = Date.now();
                 };
                 parent.appendChild(el);
             },
 
             toggleStart(force) {
                 const sm = document.getElementById('start-menu');
-                if(typeof force === 'boolean') {
-                    if(force) { sm.style.display = sm.style.display === 'flex' ? 'none' : 'flex'; event.stopPropagation(); }
+                if (typeof force === 'boolean') {
+                    if (force) { sm.style.display = sm.style.display === 'flex' ? 'none' : 'flex'; event.stopPropagation(); }
                     else { sm.style.display = 'none'; }
                 }
             },
@@ -360,26 +575,44 @@
             refresh() {
                 const d = document.getElementById('desktop');
                 d.style.opacity = '0.5';
-                setTimeout(() => d.style.opacity='1', 200);
+                setTimeout(() => d.style.opacity = '1', 200);
                 document.getElementById('ctx-menu').style.display = 'none';
             },
 
-            setWallpaper(url) { if(url) document.getElementById('desktop').style.backgroundImage = `url('${url}')`; }
+            setWallpaper(url) { if (url) document.getElementById('desktop').style.backgroundImage = `url('${url}')`; }
         };
 
         const WinMgr = {
             create(title, icon, w, h, content) {
                 OS.toggleStart(false);
-                const id = 'win-' + Date.now() + Math.floor(Math.random()*1000);
+                const id = 'win-' + Date.now() + Math.floor(Math.random() * 1000);
                 const win = document.createElement('div');
                 win.className = 'window';
                 win.id = id;
-                win.style.width = w + 'px'; win.style.height = h + 'px';
+
+                /* Responsive initial size */
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const taskH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h'));
+                const availH = vh - taskH;
+
+                let rw = Math.min(w, vw - 10);
+                let rh = Math.min(h, availH - 10);
+                win.style.width  = rw + 'px';
+                win.style.height = rh + 'px';
+
+                /* Center window */
+                const left = Math.max(5, (vw - rw) / 2);
+                const top  = Math.max(5, (availH - rh) / 2);
+                win.style.left = left + 'px';
+                win.style.top  = top  + 'px';
                 win.style.zIndex = ++OS.zIndex;
 
                 win.innerHTML = `
                     <div class="title-bar" onmousedown="WinMgr.drag(event, '${id}')">
-                        <div style="display:flex;align-items:center"><img src="${icon}" width="16" style="margin-right:5px"> ${title}</div>
+                        <div class="title-bar-left">
+                            <img src="${icon}"> <span>${title}</span>
+                        </div>
                         <div class="win-controls">
                             <div class="win-btn" onclick="document.getElementById('${id}').style.display='none'">_</div>
                             <div class="win-btn" onclick="WinMgr.maximize('${id}')">□</div>
@@ -389,50 +622,112 @@
                     <div class="window-body">${content}</div>
                 `;
                 win.onmousedown = () => WinMgr.focus(id);
+
+                /* Touch drag support */
+                win.querySelector('.title-bar').addEventListener('touchstart', (e) => WinMgr.touchDrag(e, id), { passive: false });
+
                 document.body.appendChild(win);
                 this.addTask(id, title, icon);
             },
 
-            close(id) { 
-                const win = document.getElementById(id);
-                if (win) win.remove(); 
+            close(id) {
+                const win  = document.getElementById(id);
+                if (win)  win.remove();
                 const task = document.getElementById('task-' + id);
-                if (task) task.remove(); 
+                if (task) task.remove();
             },
-            focus(id) { 
+
+            focus(id) {
                 const win = document.getElementById(id);
                 if (win) {
-                    win.style.zIndex = ++OS.zIndex; 
-                    document.querySelectorAll('.task-item').forEach(t => t.classList.remove('active')); 
+                    win.style.zIndex = ++OS.zIndex;
+                    document.querySelectorAll('.task-item').forEach(t => t.classList.remove('active'));
                     const task = document.getElementById('task-' + id);
-                    if (task) task.classList.add('active'); 
+                    if (task) task.classList.add('active');
                 }
             },
+
             maximize(id) {
-                const win = document.getElementById(id);
-                if(win.style.width === '100%') { win.style.width = '600px'; win.style.height = '400px'; win.style.top='50px'; win.style.left='50px'; }
-                else { win.style.width = '100%'; win.style.height = 'calc(100% - 30px)'; win.style.top='0'; win.style.left='0'; }
+                const win   = document.getElementById(id);
+                const taskH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h'));
+                if (win.dataset.maximized === '1') {
+                    win.style.width  = win.dataset.prevW;
+                    win.style.height = win.dataset.prevH;
+                    win.style.top    = win.dataset.prevTop;
+                    win.style.left   = win.dataset.prevLeft;
+                    win.dataset.maximized = '0';
+                } else {
+                    win.dataset.prevW    = win.style.width;
+                    win.dataset.prevH    = win.style.height;
+                    win.dataset.prevTop  = win.style.top;
+                    win.dataset.prevLeft = win.style.left;
+                    win.style.width  = '100%';
+                    win.style.height = `calc(100vh - ${taskH}px)`;
+                    win.style.top    = '0';
+                    win.style.left   = '0';
+                    win.dataset.maximized = '1';
+                }
             },
+
             addTask(id, title, icon) {
                 const task = document.createElement('div');
-                task.className = 'task-item active'; task.id = 'task-' + id;
-                task.innerHTML = `<img src="${icon}">${title}`;
-                task.onclick = () => { const w = document.getElementById(id); if(w.style.display==='none'){w.style.display='flex'; WinMgr.focus(id);} else {w.style.display='none';} };
+                task.className = 'task-item active';
+                task.id = 'task-' + id;
+                /* Truncate long titles on taskbar */
+                const shortTitle = title.length > 16 ? title.slice(0, 14) + '…' : title;
+                task.innerHTML = `<img src="${icon}">${shortTitle}`;
+                task.onclick = () => {
+                    const w = document.getElementById(id);
+                    if (w.style.display === 'none') { w.style.display = 'flex'; WinMgr.focus(id); }
+                    else { w.style.display = 'none'; }
+                };
                 document.getElementById('task-list').appendChild(task);
             },
+
             drag(e, id) {
                 const win = document.getElementById(id);
-                if(win.style.width==='100%') return;
-                let startX = e.clientX - win.offsetLeft; let startY = e.clientY - win.offsetTop;
-                const move = (ev) => { win.style.left = (ev.clientX - startX) + 'px'; win.style.top = (ev.clientY - startY) + 'px'; };
+                if (win.dataset.maximized === '1') return;
+                let startX = e.clientX - win.offsetLeft;
+                let startY = e.clientY - win.offsetTop;
+                const move = (ev) => {
+                    const taskH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h'));
+                    const newLeft = Math.max(0, Math.min(ev.clientX - startX, window.innerWidth  - win.offsetWidth));
+                    const newTop  = Math.max(0, Math.min(ev.clientY - startY, window.innerHeight - taskH - 30));
+                    win.style.left = newLeft + 'px';
+                    win.style.top  = newTop  + 'px';
+                };
                 const stop = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', stop); };
-                document.addEventListener('mousemove', move); document.addEventListener('mouseup', stop);
+                document.addEventListener('mousemove', move);
+                document.addEventListener('mouseup', stop);
+            },
+
+            touchDrag(e, id) {
+                const win = document.getElementById(id);
+                if (win.dataset.maximized === '1') return;
+                const touch = e.touches[0];
+                let startX = touch.clientX - win.offsetLeft;
+                let startY = touch.clientY - win.offsetTop;
+                const move = (ev) => {
+                    const t = ev.touches[0];
+                    const taskH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--taskbar-h'));
+                    const newLeft = Math.max(0, Math.min(t.clientX - startX, window.innerWidth  - win.offsetWidth));
+                    const newTop  = Math.max(0, Math.min(t.clientY - startY, window.innerHeight - taskH - 30));
+                    win.style.left = newLeft + 'px';
+                    win.style.top  = newTop  + 'px';
+                    ev.preventDefault();
+                };
+                const stop = () => {
+                    document.removeEventListener('touchmove', move);
+                    document.removeEventListener('touchend', stop);
+                };
+                document.addEventListener('touchmove', move, { passive: false });
+                document.addEventListener('touchend', stop);
             }
         };
 
         const Apps = {
-            open(app, arg) {
-                if(app === 'aboutme') {
+            open(app) {
+                if (app === 'aboutme') {
                     WinMgr.create("About Me", Icons.aboutme, 500, 400, `
                         <div class="portfolio-content">
                             <div class="portfolio-header">
@@ -442,18 +737,21 @@
                             <p>I am a passionate Full Stack Developer specialized in building modern web applications using Laravel, React, PHP, and JavaScript.</p>
                             <div class="skills-container">
                                 <b>Technical Skills:</b><br><br>
-                                <span class="skill-tag">HTML, CSS, JavaScript, PHP</span>
-                                <span class="skill-tag">Python & Java</span>
+                                <span class="skill-tag">HTML &amp; CSS</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">PHP &amp; Laravel</span>
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">Python &amp; Java</span>
                                 <span class="skill-tag">MySQL</span>
-                                <span class="skill-tag">Frontend & Backend</span>
+                                <span class="skill-tag">Frontend &amp; Backend</span>
                             </div>
                         </div>`);
-                } else if(app === 'projects') {
+
+                } else if (app === 'projects') {
                     WinMgr.create("My Projects", Icons.projects, 550, 480, `
                         <div class="portfolio-content">
-                            <h2 style="margin-top:0; color:var(--xp-blue); font-size: 22px; font-weight: 700;">My Projects</h2>
-                            <p style="margin-bottom: 20px; color:#555;">Here are some of my featured applications:</p>
-                            
+                            <h2 style="margin-top:0; color:var(--xp-blue); font-size:clamp(16px,4vw,22px); font-weight:700;">My Projects</h2>
+                            <p style="margin-bottom:16px; color:#555; font-size:13px;">Here are some of my featured applications:</p>
                             <div class="project-cards-container">
                                 <div class="project-card">
                                     <img src="${Icons.app}" alt="App">
@@ -463,7 +761,6 @@
                                         <a href="https://openmark.ma" target="_blank" class="visit-btn" onclick="event.stopPropagation();">Visit Project</a>
                                     </div>
                                 </div>
-                                
                                 <div class="project-card">
                                     <img src="${Icons.app}" alt="App">
                                     <div class="project-info">
@@ -471,7 +768,6 @@
                                         <p>A comprehensive system designed to handle human resources processes smoothly and efficiently.</p>
                                     </div>
                                 </div>
-                                
                                 <div class="project-card">
                                     <img src="${Icons.app}" alt="App">
                                     <div class="project-info">
@@ -481,26 +777,27 @@
                                 </div>
                             </div>
                         </div>`);
-                } else if(app === 'resume') {
+
+                } else if (app === 'resume') {
                     WinMgr.create("My Resume - cv.pdf", Icons.resume, 800, 650, `
                         <div class="portfolio-content" style="height:100%; display:flex; flex-direction:column;">
-                            <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-                                <h2 style="margin:0; color:var(--xp-blue); font-size: 20px;">Curriculum Vitae</h2>
-                                <div style="display:flex; gap:10px;">
+                            <div class="resume-header">
+                                <h2>Curriculum Vitae</h2>
+                                <div class="resume-btns">
                                     <a href="cv.pdf" download class="visit-btn" style="text-decoration:none;">Download CV</a>
-                                    <button class="visit-btn" style="background:#f44336; box-shadow: 0 2px 6px rgba(244, 67, 54, 0.4);" onclick="WinMgr.close(this.closest('.window').id)">Close Window</button>
+                                    <button class="visit-btn" style="background:#f44336; box-shadow:0 2px 6px rgba(244,67,54,0.4);" onclick="WinMgr.close(this.closest('.window').id)">Close Window</button>
                                 </div>
                             </div>
-                            <div style="flex-grow:1; border:1px solid #ccc; background:#eee; position:relative;">
-                                <iframe src="cv.pdf" style="width:100%; height:100%; border:none;"></iframe>
+                            <div style="flex-grow:1; border:1px solid #ccc; background:#eee; position:relative; min-height:200px;">
+                                <iframe src="cv.pdf" style="width:100%; height:100%; border:none; min-height:200px;"></iframe>
                             </div>
                         </div>`);
-                } else if(app === 'contact') {
-                    WinMgr.create("Contact Me", Icons.contact, 420, 360, `
+
+                } else if (app === 'contact') {
+                    WinMgr.create("Contact Me", Icons.contact, 420, 380, `
                         <div class="portfolio-content contact-container">
                             <h2>Get In Touch</h2>
                             <p>Feel free to reach out to me for collaboration or inquiries</p>
-                            
                             <ul class="contact-list">
                                 <li>
                                     <img src="${Icons.email}" alt="Email">
@@ -520,13 +817,20 @@
                                 </li>
                             </ul>
                         </div>`);
-                } else if(app === 'properties') {
+
+                } else if (app === 'properties') {
                     const pid = 'prev-' + Date.now();
                     WinMgr.create("Properties", Icons.prop, 350, 420, `
-                        <div style="padding:15px;"><div class="prop-preview"><div id="${pid}" class="prop-screen" style="background-image:url('${Wallpapers.bliss}')"></div></div>
-                        <fieldset style="margin-top:20px; padding:10px;"><legend>Background</legend>
-                        <select onchange="document.getElementById('${pid}').style.backgroundImage='url('+this.value+')'; OS.temp=this.value;" style="width:100%"><option value="${Wallpapers.bliss}">Bliss</option></select>
-                        <button style="margin-top:10px;" onclick="OS.setWallpaper(OS.temp); WinMgr.close(this.closest('.window').id)">Apply</button></fieldset></div>`);
+                        <div style="padding:12px;">
+                            <div class="prop-preview"><div id="${pid}" class="prop-screen" style="background-image:url('${Wallpapers.bliss}')"></div></div>
+                            <fieldset style="margin-top:16px; padding:10px;">
+                                <legend>Background</legend>
+                                <select onchange="document.getElementById('${pid}').style.backgroundImage='url('+this.value+')'; OS.temp=this.value;" style="width:100%; padding:4px; font-size:12px;">
+                                    <option value="${Wallpapers.bliss}">Bliss</option>
+                                </select>
+                                <button style="margin-top:10px; padding:5px 12px; cursor:pointer;" onclick="OS.setWallpaper(OS.temp); WinMgr.close(this.closest('.window').id)">Apply</button>
+                            </fieldset>
+                        </div>`);
                 }
             }
         };
